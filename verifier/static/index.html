@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>invite_me</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h1>invite_me</h1>
+  <p><span class="text-primary">If you have a keybase account, you can get <mark>100 ETH</mark> in our private PoA Parity network.</span></p>
+  <p><span class="text-primary">You have to connect to our network using this instructions.</span></p>
+  <div class="form-group">
+    <label for="usr">Name of your keybase.io identity (username):</label>
+    <input type="text" class="form-control" id="usr">
+  </div>
+  <button id="create" type="button" class="btn btn-primary">Create new Ethereum account</button>
+  <div id="pre"></div>
+  <div id="pre_trx"><br/></div>
+  <div id="pre_trx1"></div>
+</div>
+
+<script>
+$( "#create" ).click(function() {
+  if ($('#usr').val() != '') {
+    $('#create').prop("disabled", true)
+    $.get("/invite/" + $('#usr').val(), function(data) {
+        $('#pre').append(data);
+        $('#pre').append('<button id="verify" type="button" class="btn btn-primary">Verify user and request 100 ETH</button>');
+    });
+  }
+});
+$('body').on('click', 'button#verify', function() {
+  $('#verify').prop("disabled", true)
+  $('#pre_trx').append("<div class='alert alert-info'>We will try to load the file <code>https://YOUR_USER_NAME.keybase.pub/ethereum.json</code></div>");
+  $.get("/load/" + $('#usr').val(), function(data) {
+      if (data.startsWith("ERROR")) {
+        $('#pre_trx1').append("<div class='alert alert-danger'><b>" + data + "</b></div>");
+      } else {
+        $('#pre_trx1').append("<div class='alert alert-success'>transaction id: <b>" + data + "</b></div>");
+      }
+  });
+});
+</script>
+</body>
+
+</html>
